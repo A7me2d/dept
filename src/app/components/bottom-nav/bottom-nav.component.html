@@ -1,0 +1,16 @@
+<nav class="nav" aria-label="التنقل الرئيسي">
+  <a class="nav__item" routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
+    <mat-icon class="nav__icon">today</mat-icon>
+    <span class="nav__label">اليوم</span>
+  </a>
+
+  <a class="nav__item" routerLink="/history" routerLinkActive="is-active">
+    <mat-icon class="nav__icon">history</mat-icon>
+    <span class="nav__label">السجل</span>
+  </a>
+
+  <a class="nav__item" routerLink="/settings" routerLinkActive="is-active">
+    <mat-icon class="nav__icon">settings</mat-icon>
+    <span class="nav__label">الإعدادات</span>
+  </a>
+</nav>

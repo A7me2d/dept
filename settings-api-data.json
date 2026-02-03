@@ -1,0 +1,9 @@
+[
+  {
+    "id": "settings",
+    "dailyLimit": 500,
+    "weeklyLimit": 3000,
+    "alertsEnabled": true,
+    "updatedAt": "2026-02-03T09:00:00.000Z"
+  }
+]

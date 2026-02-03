@@ -1,0 +1,44 @@
+<section class="head">
+  <div class="page">
+    <div class="page__header">
+      <button mat-icon-button (click)="back()" class="page__back">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="title">تفاصيل اليوم</h1>
+      <div class="subtitle">{{ dateLabel() }}</div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card__row">
+    <div class="label">الإجمالي</div>
+    <div class="value">{{ total() | number: '1.0-2' }} ج.م</div>
+  </div>
+</section>
+
+<section class="list">
+  <div class="empty" *ngIf="items().length === 0">
+    <mat-icon class="empty-state__icon">receipt_long</mat-icon>
+    <p>لا توجد مصروفات لهذا اليوم.</p>
+  </div>
+
+  <div class="item" *ngFor="let e of items()">
+    <div class="item__meta">
+      <div class="item__time">{{ e.time }}</div>
+      <div class="item__cat">{{ e.category }}</div>
+      <div class="item__desc" *ngIf="e.description">{{ e.description }}</div>
+    </div>
+
+    <div class="item__amount">{{ e.amount | number: '1.0-2' }} ج.م</div>
+
+    <div class="item__actions">
+      <button mat-icon-button [routerLink]="['/expense', e.id]">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button type="button" (click)="deleteExpense(e.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+</section>

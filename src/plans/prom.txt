@@ -1,0 +1,426 @@
+Build an ADVANCED AI-powered personal expense tracking web application using Angular.
+
+Framework:
+- Angular (latest version) with Standalone Components
+- TypeScript with strict mode
+- NgRx Signals for reactive state management
+- Component-based architecture with lazy loading
+- Service layer with RxJS for business logic
+- IndexedDB with Dexie.js for robust local storage
+- Cloud-ready architecture (Firebase/Supabase hooks)
+- PWA support for offline functionality
+
+Language:
+Arabic (RTL) with English toggle support
+Currency:
+EGP (with multi-currency support ready)
+
+────────────────────
+ADVANCED FEATURES
+────────────────────
+🎯 Smart Analytics
+- AI-powered spending pattern recognition
+- Predictive budget forecasting
+- Category-wise spending breakdown with charts
+- Monthly/Yearly reports with trends
+- Spending heatmaps
+- Budget vs actual comparison
+- Financial health score
+
+💡 Intelligent Features
+- Recurring expense automation (subscriptions, bills)
+- Smart categorization with ML suggestions
+- Duplicate expense detection
+- Expense clustering and grouping
+- Receipt attachment with OCR support
+- Voice input for expenses
+- Location-based expense tracking
+
+📊 Budgeting System
+- Category-wise budgets
+- Monthly budget planning with envelopes
+- Budget rollover options
+- Savings goals with progress tracking
+- Emergency fund tracking
+- Debt payoff calculator
+
+🔔 Smart Notifications
+- Predictive budget warnings
+- Overspending alerts with suggestions
+- Unusual spending pattern detection
+- Bill payment reminders
+- Weekly/monthly summaries
+- Financial tips based on spending
+
+📤 Data Management
+- CSV/Excel export with custom filters
+- PDF report generation
+- Data backup/restore
+- Cloud sync ready
+- Import from other apps
+- Data visualization exports
+
+🔒 Security & Privacy
+- Local data encryption
+- Biometric authentication
+- Private/stealth mode
+- Data anonymization option
+- Secure export with password
+
+────────────────────
+DESIGN / UI
+────────────────────
+- Modern finance app aesthetics with micro-interactions
+- Dark/Light mode with system preference detection
+- Glassmorphism design elements
+- Smooth animations and transitions
+- Fully responsive (mobile-first)
+- Accessibility (WCAG AA compliant)
+- Custom scrollbar styling
+- Skeleton loading states
+
+Color System:
+- Primary: #1E3A8A (Dark Blue)
+- Secondary: #F1F5F9 (Light Gray)
+- Accent: #6366F1 (Indigo)
+- Success: #22C55E (Green)
+- Warning: #F59E0B (Orange)
+- Danger: #EF4444 (Red)
+- Info: #3B82F6 (Blue)
+- Dark Mode Surface: #0F172A
+- Dark Mode Background: #1E293B
+
+UI Libraries:
+- Angular CDK for advanced interactions
+- Custom components with Tailwind CSS
+- Chart.js/D3.js for data visualization
+- Material Icons / Lucide Icons
+- Framer Motion for animations
+
+────────────────────
+ENHANCED SCREENS / COMPONENTS
+────────────────────
+
+1️⃣ DashboardComponent
+- Today's spending overview with animated counters
+- Daily/Weekly/Monthly limits with circular progress
+- Quick stats cards (avg daily, this week vs last week)
+- Recent expenses with swipe actions
+- Spending trend mini-chart
+- Quick add expense FAB
+- Financial health score
+- Upcoming bills reminder
+- Widget-style summary cards
+
+2️⃣ AddEditExpenseComponent
+Fields:
+- Amount (required, with currency converter)
+- Category (smart suggestions based on history)
+- Subcategory
+- Description (with voice input)
+- Date & Time (smart defaults)
+- Payment method (cash, card, digital wallet)
+- Tags/labels
+- Location (auto-detect)
+- Receipt attachment (camera/gallery)
+- Recurring option (daily/weekly/monthly)
+
+Modes:
+- Add Mode with smart defaults
+- Edit Mode with full history
+- Duplicate Mode
+- Quick Add (minimal fields)
+
+Validation:
+- Real-time validation
+- Duplicate detection
+- Amount range validation
+- Required field indicators
+- Smart suggestions
+
+3️⃣ ExpensesListComponent
+- Grouped by time periods (morning/afternoon/evening)
+- Swipe actions (edit/delete/archive)
+- Filter by category, amount, tags
+- Search with fuzzy matching
+- Sort options (time, amount, category)
+- Bulk actions (select multiple)
+- Export selected
+- Infinite scroll with virtualization
+
+4️⃣ HistoryComponent
+- Calendar view with spending indicators
+- Monthly/Weekly/Daily views
+- Spending heat map
+- Quick stats per period
+- Compare with previous period
+- Filter by categories, tags
+- Export period data
+
+5️⃣ DayDetailsComponent
+- Full expense list with timeline
+- Category breakdown pie chart
+- Time-of-day distribution
+- Edit/Delete/Archive actions
+- Add note to expense
+- Mark as recurring
+- Duplicate expense
+
+6️⃣ AnalyticsComponent
+- Spending trends with line charts
+- Category distribution with donut charts
+- Monthly comparison bar charts
+- Spending heatmap by day
+- Budget performance
+- Savings goals progress
+- Export reports
+
+7️⃣ BudgetsComponent
+- Create/Edit/Delete budgets
+- Category-wise budgets
+- Monthly budget envelopes
+- Budget rollover settings
+- Budget vs actual tracking
+- Overspending alerts
+- Budget recommendations
+
+8️⃣ SavingsGoalsComponent
+- Create savings goals
+- Track progress
+- Set target dates
+- Automatic savings allocation
+- Goal completion celebrations
+
+9️⃣ SettingsComponent
+- Daily/Weekly/Monthly spending limits
+- Category-wise budgets
+- Currency settings
+- Notification preferences
+- Theme (light/dark/auto)
+- Language (Arabic/English)
+- Data backup/restore
+- Export settings
+- Privacy settings
+- App reset
+
+🔟 RecurringExpensesComponent
+- List all recurring expenses
+- Edit recurrence rules
+- Pause/Resume
+- View next occurrence
+- History of past occurrences
+
+1️⃣1️⃣ ReportsComponent
+- Custom date range reports
+- Category breakdown
+- Payment method analysis
+- Export to PDF/CSV
+- Print-friendly layout
+- Share reports
+
+────────────────────
+ADVANCED FUNCTIONALITY
+────────────────────
+Core:
+- Add, Edit, Delete, Archive expenses
+- Real-time total recalculation
+- Automatic daily/weekly/monthly resets
+- Smart budget tracking
+- Recurring expense automation
+- Offline support with sync queue
+
+Analytics:
+- Spending pattern analysis
+- Category-wise insights
+- Time-based spending trends
+- Budget performance metrics
+- Predictive alerts
+- Financial health scoring
+
+Smart Features:
+- AI categorization suggestions
+- Duplicate detection
+- Voice input (Arabic/English)
+- Receipt OCR
+- Location tagging
+- Quick actions
+
+Data:
+- Persistent IndexedDB storage
+- Automatic backup
+- Export/Import functionality
+- Cloud sync ready
+- Data encryption
+
+Notifications:
+- Smart budget warnings
+- Overspending alerts
+- Unusual spending detection
+- Bill payment reminders
+- Weekly/monthly summaries
+- Financial tips
+
+────────────────────
+ENHANCED DATA MODEL (TypeScript)
+────────────────────
+Expense:
+- id: string (UUID)
+- amount: number
+- currency: string
+- category: string
+- subcategory: string
+- description: string
+- date: string (ISO)
+- time: string
+- paymentMethod: 'cash' | 'card' | 'digital_wallet'
+- tags: string[]
+- location?: { lat: number, lng: number, address: string }
+- receipt?: { url: string, type: string }
+- isRecurring: boolean
+- recurringRule?: { frequency: 'daily' | 'weekly' | 'monthly', endDate?: string }
+- parentId?: string (for recurring instances)
+- notes?: string
+- archived: boolean
+- createdAt: string
+- updatedAt: string
+
+Budget:
+- id: string
+- name: string
+- type: 'daily' | 'weekly' | 'monthly' | 'category'
+- category?: string
+- amount: number
+- period: { start: string, end: string }
+- rollover: boolean
+- alertThreshold: number (percentage)
+- createdAt: string
+- updatedAt: string
+
+SavingsGoal:
+- id: string
+- name: string
+- targetAmount: number
+- currentAmount: number
+- targetDate: string
+- category?: string
+- status: 'active' | 'completed' | 'paused'
+- createdAt: string
+- updatedAt: string
+
+Settings:
+- dailyLimit: number
+- weeklyLimit: number
+- monthlyLimit: number
+- currency: string
+- language: 'ar' | 'en'
+- theme: 'light' | 'dark' | 'auto'
+- notifications: {
+  budgetWarnings: boolean
+  overspendingAlerts: boolean
+  billReminders: boolean
+  weeklySummary: boolean
+  monthlySummary: boolean
+}
+- privacy: {
+  enableEncryption: boolean
+  biometricAuth: boolean
+  stealthMode: boolean
+}
+- data: {
+  autoBackup: boolean
+  lastBackup: string
+}
+
+RecurringExpense:
+- id: string
+- name: string
+- amount: number
+- category: string
+- frequency: 'daily' | 'weekly' | 'monthly'
+- nextOccurrence: string
+- endDate?: string
+- isActive: boolean
+- lastProcessed: string
+
+────────────────────
+ADVANCED UX DETAILS
+────────────────────
+- Contextual snackbar messages with actions
+- Smart confirmation dialogs
+- Smooth page transitions
+- Empty states with illustrations
+- Loading skeletons
+- Pull-to-refresh
+- Swipe gestures
+- Haptic feedback (mobile)
+- Keyboard shortcuts
+- Undo/Redo support
+- Onboarding tutorial
+- Tooltips and help text
+
+────────────────────
+TECHNICAL ARCHITECTURE
+────────────────────
+State Management:
+- NgRx Signals for reactive state
+- Services for business logic
+- RxJS for async operations
+- Local storage persistence
+
+Performance:
+- Lazy loading for routes
+- Virtual scrolling for lists
+- Image optimization
+- Code splitting
+- Service Worker for PWA
+
+Testing:
+- Unit tests with Jest
+- Integration tests
+- E2E tests with Playwright
+- Component testing
+
+Build & Deploy:
+- Angular CLI
+- Optimized production builds
+- PWA configuration
+- Environment-based configs
+
+────────────────────
+EXAMPLE USAGE
+────────────────────
+Dashboard:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 اليوم - 15 فبراير 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 المصروف اليوم: 450 ج.م
+📊 الحد اليومي: 500 ج.م
+✅ المتبقي: 50 ج.م
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📈 الأسبوع الحالي: 2,100 / 3,000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚡ الإجراءات السريعة:
+• إضافة مصروف
+• عرض التحليلات
+• إعدادات الميزانية
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Recent Expenses:
+09:30 🍔 طعام - 25 ج.م
+14:00 🚕 مواصلات - 50 ج.م
+18:45 🛒 تسوق - 200 ج.م
+
+────────────────────
+GOAL
+────────────────────
+A sophisticated, AI-powered expense tracker that helps users:
+- Track spending with intelligent categorization
+- Manage budgets with predictive alerts
+- Achieve savings goals with visual progress
+- Understand spending patterns with analytics
+- Automate recurring expenses
+- Maintain financial health with smart insights
+- Export and backup data securely
+- Experience a polished, modern UI with Arabic RTL support
+
+The application should be production-ready, performant, and scalable with cloud integration capabilities.

@@ -1,0 +1,7 @@
+<div class="wrap" *ngIf="state().open">
+  <div class="toast" [ngClass]="kindClass()" role="status" (click)="dismiss()">
+    <div class="toast__dot"></div>
+    <div class="toast__msg">{{ state().message }}</div>
+    <div class="toast__hint">إغلاق</div>
+  </div>
+</div>

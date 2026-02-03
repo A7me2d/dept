@@ -1,0 +1,23 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-card__header">
+      <mat-icon class="login-card__icon">account_balance_wallet</mat-icon>
+      <h1 class="login-card__title">مصروفاتي</h1>
+      <p class="login-card__subtitle">تسجيل الدخول</p>
+    </div>
+
+    <form class="login-card__form" [formGroup]="form" (ngSubmit)="login()">
+      <label class="field">
+        <div class="field__label">اسم المستخدم</div>
+        <input class="input" type="text" formControlName="username" placeholder="أدخل اسم المستخدم" />
+      </label>
+
+      <label class="field">
+        <div class="field__label">كلمة المرور</div>
+        <input class="input" type="password" formControlName="password" placeholder="أدخل كلمة المرور" />
+      </label>
+
+      <button class="btn btn--primary btn--full" type="submit">دخول</button>
+    </form>
+  </div>
+</div>

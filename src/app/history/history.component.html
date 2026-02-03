@@ -1,0 +1,18 @@
+<section class="head">
+  <div>
+    <h1 class="title">السجل</h1>
+    <div class="subtitle">ملخص الأيام السابقة</div>
+  </div>
+
+  <a class="link" routerLink="/">رجوع</a>
+</section>
+
+<section class="cards">
+  <div class="empty" *ngIf="days().length === 0">لا توجد بيانات بعد.</div>
+
+  <a class="card" *ngFor="let d of days()" [routerLink]="['/day', d.date]">
+    <div class="card__date">{{ formatDateLabel(d.date) }}</div>
+    <div class="card__total">{{ d.total | number: '1.0-2' }} ج.م</div>
+    <div class="card__hint">عرض التفاصيل</div>
+  </a>
+</section>

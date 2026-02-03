@@ -1,0 +1,62 @@
+<section class="head">
+  <div>
+    <h1 class="title">{{ isEdit() ? 'تعديل مصروف' : 'إضافة مصروف' }}</h1>
+    <div class="subtitle">سجّل مصروفك بسرعة وبوضوح</div>
+  </div>
+
+  <a class="link" routerLink="/">
+    <mat-icon>arrow_forward</mat-icon>
+  </a>
+</section>
+
+<form class="form" [formGroup]="form" (ngSubmit)="save()">
+  <div class="row">
+    <label class="field">
+      <div class="field__label">المبلغ (ج.م)</div>
+      <input class="input" type="number" inputmode="decimal" formControlName="amount" placeholder="0" />
+      <div class="error" *ngIf="form.controls.amount.touched && form.controls.amount.invalid">
+        أدخل مبلغ صحيح
+      </div>
+    </label>
+
+    <label class="field">
+      <div class="field__label">التصنيف</div>
+      <select class="input" formControlName="category">
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+    </label>
+  </div>
+
+  <label class="field">
+    <div class="field__label">الوصف</div>
+    <input class="input" type="text" formControlName="description" placeholder="مثال: غداء" />
+  </label>
+
+  <div class="row">
+    <label class="field">
+      <div class="field__label">التاريخ</div>
+      <input class="input" type="date" formControlName="date" />
+    </label>
+
+    <label class="field">
+      <div class="field__label">الوقت</div>
+      <input class="input" type="time" formControlName="time" />
+    </label>
+  </div>
+
+  <div class="row">
+    <label class="field">
+      <div class="field__label">طريقة الدفع</div>
+      <select class="input" formControlName="paymentMethod">
+        <option value="cash">نقدي</option>
+        <option value="card">بطاقة</option>
+        <option value="digital_wallet">محفظة</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn--primary" type="submit">حفظ</button>
+    <button class="btn" type="button" (click)="cancel()">إلغاء</button>
+  </div>
+</form>

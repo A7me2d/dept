@@ -1,0 +1,29 @@
+<section class="head">
+  <div>
+    <h1 class="title">الإعدادات</h1>
+    <div class="subtitle">حدود الصرف والتنبيهات</div>
+  </div>
+
+  <a class="link" routerLink="/">رجوع</a>
+</section>
+
+<form class="form" [formGroup]="form" (ngSubmit)="save()">
+  <label class="field">
+    <div class="field__label">الحد اليومي (ج.م)</div>
+    <input class="input" type="number" inputmode="decimal" formControlName="dailyLimit" />
+  </label>
+
+  <label class="field">
+    <div class="field__label">الحد الأسبوعي (ج.م)</div>
+    <input class="input" type="number" inputmode="decimal" formControlName="weeklyLimit" />
+  </label>
+
+  <label class="toggle">
+    <input type="checkbox" formControlName="alertsEnabled" />
+    <span>تفعيل التنبيهات</span>
+  </label>
+
+  <div class="actions">
+    <button class="btn btn--primary" type="submit">حفظ</button>
+  </div>
+</form>
