@@ -12,6 +12,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'salary',
+    loadComponent: () => import('./salary/salary.component').then((m) => m.SalaryComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'expense',
     loadComponent: () =>
       import('./add-expense/add-expense.component').then((m) => m.AddExpenseComponent),

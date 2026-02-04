@@ -8,6 +8,7 @@ import { ExpenseService } from '../services/expense.service';
 import { SettingsService } from '../services/settings.service';
 import { ToastService } from '../services/toast.service';
 import { ConfirmDialogService } from '../services/confirm-dialog.service';
+import { SalaryService } from '../services/salary.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,6 +22,7 @@ export class DashboardComponent {
   private readonly settings = inject(SettingsService);
   private readonly toast = inject(ToastService);
   private readonly confirm = inject(ConfirmDialogService);
+  private readonly salaryService = inject(SalaryService);
 
   private readonly now = new Date();
 
@@ -85,6 +87,18 @@ export class DashboardComponent {
     if (p >= 1) return 'danger';
     if (p >= 0.8) return 'warning';
     return 'success';
+  });
+
+  protected readonly totalSalary = computed(() => this.salaryService.totalSalary());
+  protected readonly currentMonth = computed(() => this.salaryService.getCurrentMonth());
+  protected readonly currentMonthSalary = computed(() => this.salaryService.getTotalByMonth(this.currentMonth())());
+
+  protected readonly totalExpenses = computed(() => {
+    return this.expenses.expenses().reduce((sum, e) => sum + e.amount, 0);
+  });
+
+  protected readonly totalBalance = computed(() => {
+    return this.totalSalary() - this.totalExpenses();
   });
 
   async deleteExpense(id: string) {

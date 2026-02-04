@@ -1,136 +1,160 @@
 <section class="hero">
   <div class="hero__left">
+    <div class="hero__eyebrow">لوحة التحكم</div>
     <h1 class="hero__title">اليوم</h1>
     <div class="hero__date">{{ todayLabel }}</div>
   </div>
-  <button mat-fab routerLink="/expense" class="hero__fab" color="primary">
-    <mat-icon>add</mat-icon>
-  </button>
-</section>
-
-<section class="grid grid--three">
-  <div class="card card--stat">
-    <div class="card__icon">
-      <mat-icon>today</mat-icon>
+  <div class="hero__actions">
+    <div class="balance-pill" [class.is-negative]="totalBalance() < 0">
+      <span>الرصيد الكلي</span>
+      <strong>{{ totalBalance() | number: '1.0-2' }} ج.م</strong>
     </div>
-    <div class="card__content">
-      <div class="card__label">المصروف اليوم</div>
-      <div class="card__value">{{ todayTotal() | number: '1.0-2' }} ج.م</div>
-    </div>
-  </div>
-
-  <div class="card card--stat">
-    <div class="card__icon">
-      <mat-icon>limit</mat-icon>
-    </div>
-    <div class="card__content">
-      <div class="card__label">الحد اليومي</div>
-      <div class="card__value">{{ dailyLimit() | number: '1.0-2' }} ج.م</div>
-    </div>
-  </div>
-
-  <div class="card card--stat card--accent">
-    <div class="card__icon">
-      <mat-icon>account_balance_wallet</mat-icon>
-    </div>
-    <div class="card__content">
-      <div class="card__label">المتبقي</div>
-      <div class="card__value" [class.is-negative]="remaining() < 0">
-        {{ remaining() | number: '1.0-2' }} ج.م
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="card card--progress">
-  <div class="card__header">
-    <div class="card__title">
-      <mat-icon>trending_up</mat-icon>
-      <span>تقدم اليوم</span>
-    </div>
-    <div class="card__meta">{{ (progress() * 100) | number: '1.0-0' }}%</div>
-  </div>
-  <div class="card__body">
-    <div class="bar__track" [attr.data-kind]="progressKind()">
-      <div class="bar__fill" [style.width.%]="progress() * 100"></div>
-    </div>
-    <div class="bar__hint" *ngIf="alertsEnabled() && progress() >= 0.8 && progress() < 1">اقتربت من الحد اليومي</div>
-    <div class="bar__hint" *ngIf="alertsEnabled() && progress() >= 1">تم تجاوز الحد اليومي</div>
-  </div>
-</section>
-
-<section class="grid grid--two">
-  <div class="card card--stat">
-    <div class="card__icon">
-      <mat-icon>date_range</mat-icon>
-    </div>
-    <div class="card__content">
-      <div class="card__label">المصروف هذا الأسبوع</div>
-      <div class="card__value">{{ weeklyTotal() | number: '1.0-2' }} ج.م</div>
-    </div>
-  </div>
-
-  <div class="card card--stat">
-    <div class="card__icon">
-      <mat-icon>savings</mat-icon>
-    </div>
-    <div class="card__content">
-      <div class="card__label">المتبقي أسبوعياً</div>
-      <div class="card__value" [class.is-negative]="weeklyRemaining() < 0">
-        {{ weeklyRemaining() | number: '1.0-2' }} ج.م
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="card card--progress">
-  <div class="card__header">
-    <div class="card__title">
-      <mat-icon>calendar_month</mat-icon>
-      <span>تقدم الأسبوع</span>
-    </div>
-    <div class="card__meta">{{ (weeklyProgress() * 100) | number: '1.0-0' }}%</div>
-  </div>
-  <div class="card__body">
-    <div class="bar__track" [attr.data-kind]="weeklyProgressKind()">
-      <div class="bar__fill" [style.width.%]="weeklyProgress() * 100"></div>
-    </div>
-    <div class="bar__hint" *ngIf="alertsEnabled() && weeklyProgress() >= 0.8 && weeklyProgress() < 1">اقتربت من الحد الأسبوعي</div>
-    <div class="bar__hint" *ngIf="alertsEnabled() && weeklyProgress() >= 1">تم تجاوز الحد الأسبوعي</div>
-  </div>
-</section>
-
-<section class="card">
-  <div class="card__header">
-    <div class="card__title">
-      <mat-icon>receipt_long</mat-icon>
-      <span>مصروفات اليوم</span>
-    </div>
-    <button mat-icon-button routerLink="/add-expense" class="card__action">
+    <button mat-stroked-button routerLink="/salary" class="hero__btn">
+      <mat-icon>payments</mat-icon>
+      إدارة الراتب
+    </button>
+    <button mat-fab routerLink="/expense" class="hero__fab" color="primary">
       <mat-icon>add</mat-icon>
     </button>
   </div>
-  <div class="card__body">
-    <div *ngIf="todayExpenses().length === 0">
-      <div class="empty-state">
-        <mat-icon class="empty-state__icon">receipt_long</mat-icon>
-        <p>لا توجد مصروفات اليوم</p>
+</section>
+
+<div class="dashboard">
+  <div class="dashboard__main">
+    <section class="strip">
+      <div class="strip__item">
+        <div class="strip__label">المصروف اليوم</div>
+        <div class="strip__value">{{ todayTotal() | number: '1.0-2' }} ج.م</div>
       </div>
-    </div>
-    <div *ngIf="todayExpenses().length > 0">
-      <div class="expense-list">
-        <div *ngFor="let e of todayExpenses()">
-          <div class="expense-item">
-            <div class="expense-item__main">
-              <span class="expense-item__category">{{ e.category }}</span>
-              <span class="expense-item__amount">{{ e.amount | number: '1.0-2' }} ج.م</span>
-            </div>
-            <button mat-icon-button (click)="deleteExpense(e.id)" class="expense-item__delete">
-              <mat-icon>delete</mat-icon>
-            </button>
+      <div class="strip__item">
+        <div class="strip__label">الحد اليومي</div>
+        <div class="strip__value">{{ dailyLimit() | number: '1.0-2' }} ج.م</div>
+      </div>
+      <div class="strip__item" [class.is-negative]="remaining() < 0">
+        <div class="strip__label">المتبقي اليومي</div>
+        <div class="strip__value">{{ remaining() | number: '1.0-2' }} ج.م</div>
+      </div>
+    </section>
+
+    <section class="panel panel--highlight">
+      <div class="panel__header">
+        <h2>المال</h2>
+        <span>ملخص الراتب والمصروف</span>
+      </div>
+      <div class="highlight">
+        <div class="highlight__main" [class.is-negative]="totalBalance() < 0">
+          <div class="highlight__label">الرصيد الكلي</div>
+          <div class="highlight__value">{{ totalBalance() | number: '1.0-2' }} ج.م</div>
+          <div class="highlight__meta">آخر تحديث: اليوم</div>
+        </div>
+        <div class="highlight__stats">
+          <div class="stat">
+            <span>إجمالي الراتب</span>
+            <strong>{{ totalSalary() | number: '1.0-2' }} ج.م</strong>
+          </div>
+          <div class="stat">
+            <span>راتب هذا الشهر</span>
+            <strong>{{ currentMonthSalary() | number: '1.0-2' }} ج.م</strong>
+          </div>
+          <div class="stat">
+            <span>إجمالي المصروفات</span>
+            <strong>{{ totalExpenses() | number: '1.0-2' }} ج.م</strong>
           </div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <section class="panel panel--progress">
+      <div class="panel__header">
+        <h2>التقدم</h2>
+        <span>اليوم والأسبوع</span>
+      </div>
+      <div class="progress-grid">
+        <div class="card card--progress">
+          <div class="card__header">
+            <div class="card__title">
+              <mat-icon>trending_up</mat-icon>
+              <span>تقدم اليوم</span>
+            </div>
+            <div class="card__meta">{{ (progress() * 100) | number: '1.0-0' }}%</div>
+          </div>
+          <div class="card__body">
+            <div class="bar__track" [attr.data-kind]="progressKind()">
+              <div class="bar__fill" [style.width.%]="progress() * 100"></div>
+            </div>
+            <div class="bar__hint" *ngIf="alertsEnabled() && progress() >= 0.8 && progress() < 1">اقتربت من الحد اليومي</div>
+            <div class="bar__hint" *ngIf="alertsEnabled() && progress() >= 1">تم تجاوز الحد اليومي</div>
+          </div>
+        </div>
+
+        <div class="card card--progress">
+          <div class="card__header">
+            <div class="card__title">
+              <mat-icon>calendar_month</mat-icon>
+              <span>تقدم الأسبوع</span>
+            </div>
+            <div class="card__meta">{{ (weeklyProgress() * 100) | number: '1.0-0' }}%</div>
+          </div>
+          <div class="card__body">
+            <div class="bar__track" [attr.data-kind]="weeklyProgressKind()">
+              <div class="bar__fill" [style.width.%]="weeklyProgress() * 100"></div>
+            </div>
+            <div class="bar__hint" *ngIf="alertsEnabled() && weeklyProgress() >= 0.8 && weeklyProgress() < 1">اقتربت من الحد الأسبوعي</div>
+            <div class="bar__hint" *ngIf="alertsEnabled() && weeklyProgress() >= 1">تم تجاوز الحد الأسبوعي</div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-</section>
+
+  <aside class="dashboard__side">
+    <section class="panel panel--week">
+      <div class="panel__header">
+        <h2>الأسبوع</h2>
+        <span>ملخص سريع</span>
+      </div>
+      <div class="week-stats">
+        <div class="week-stats__item">
+          <span>المصروف</span>
+          <strong>{{ weeklyTotal() | number: '1.0-2' }} ج.م</strong>
+        </div>
+        <div class="week-stats__item" [class.is-negative]="weeklyRemaining() < 0">
+          <span>المتبقي</span>
+          <strong>{{ weeklyRemaining() | number: '1.0-2' }} ج.م</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel panel--expenses">
+      <div class="panel__header">
+        <h2>مصروفات اليوم</h2>
+        <button mat-icon-button routerLink="/add-expense" class="card__action">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <div class="card__body">
+        <div *ngIf="todayExpenses().length === 0">
+          <div class="empty-state">
+            <mat-icon class="empty-state__icon">receipt_long</mat-icon>
+            <p>لا توجد مصروفات اليوم</p>
+          </div>
+        </div>
+        <div *ngIf="todayExpenses().length > 0">
+          <div class="expense-list">
+            <div *ngFor="let e of todayExpenses()">
+              <div class="expense-item">
+                <div class="expense-item__main">
+                  <span class="expense-item__category">{{ e.category }}</span>
+                  <span class="expense-item__amount">{{ e.amount | number: '1.0-2' }} ج.م</span>
+                </div>
+                <button mat-icon-button (click)="deleteExpense(e.id)" class="expense-item__delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </aside>
+</div>

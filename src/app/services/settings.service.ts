@@ -9,6 +9,7 @@ const DEFAULT_SETTINGS: Settings = {
   dailyLimit: 500,
   weeklyLimit: 3000,
   alertsEnabled: true,
+  salaries: [],
   updatedAt: new Date().toISOString()
 };
 
@@ -26,7 +27,11 @@ export class SettingsService {
     try {
       const items = await this.http.get<Settings[]>(API_URL).toPromise();
       if (items && items.length > 0) {
-        this.settings.set(items[0]);
+        const loadedSettings = items[0];
+        this.settings.set({
+          ...loadedSettings,
+          salaries: loadedSettings.salaries || []
+        });
       } else {
         const created = await this.http.post<Settings>(API_URL, DEFAULT_SETTINGS).toPromise();
         this.settings.set(created || DEFAULT_SETTINGS);

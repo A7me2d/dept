@@ -1,11 +1,13 @@
 import Dexie, { Table } from 'dexie';
 import { Expense } from '../models/expense.model';
 import { Settings } from '../models/settings.model';
+import { Salary } from '../models/salary.model';
 
 export class AppDatabase extends Dexie {
   expenses!: Table<Expense, string>;
   settings!: Table<Settings, 'settings'>;
   users!: Table<{ username: string; password: string }, string>;
+  salaries!: Table<Salary, string>;
 
   constructor() {
     super('expense_tracker_db');
@@ -13,7 +15,8 @@ export class AppDatabase extends Dexie {
     this.version(2).stores({
       expenses: 'id, date, category, amount, createdAt',
       settings: 'id',
-      users: 'username'
+      users: 'username',
+      salaries: 'id, month, amount, createdAt'
     });
 
     this.on('populate', () => {
