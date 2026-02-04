@@ -1,4 +1,4 @@
-import { DecimalPipe, NgFor, NgIf } from '@angular/common';
+import { DecimalPipe, NgFor, NgIf, DatePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { endOfWeek, format, startOfWeek } from 'date-fns';
@@ -13,7 +13,7 @@ import { SalaryService } from '../services/salary.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgIf, NgFor, RouterLink, DecimalPipe, MatIconModule, MatButtonModule],
+  imports: [NgIf, NgFor, RouterLink, DecimalPipe, DatePipe, MatIconModule, MatButtonModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -56,6 +56,16 @@ export class DashboardComponent {
     if (p >= 0.8) return 'warning';
     return 'success';
   });
+
+  protected readonly greeting = computed(() => {
+    const hour = this.now.getHours();
+    if (hour < 12) return 'صباح الخير';
+    if (hour < 18) return 'مساء الخير';
+    return 'مرحباً بك';
+  });
+
+  protected readonly dailyProgressPercent = computed(() => Math.round(this.progress() * 100));
+  protected readonly weeklyProgressPercent = computed(() => Math.round(this.weeklyProgress() * 100));
 
   private readonly weekStartKey = format(startOfWeek(this.now, { weekStartsOn: 6 }), 'yyyy-MM-dd');
   private readonly weekEndKey = format(endOfWeek(this.now, { weekStartsOn: 6 }), 'yyyy-MM-dd');

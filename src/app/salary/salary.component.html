@@ -1,74 +1,179 @@
-<div class="salary-container">
-  <div class="header">
-    <h1>إدارة الرواتب</h1>
-    <p>أدخل راتبك الشهري وتتبع إجمالي أموالك</p>
-  </div>
+<div class="salary-dashboard">
+  <!-- Left Panel: Actions -->
+  <aside class="action-panel">
+    <div class="panel-header">
+      <h2>{{ editingId ? 'تعديل الراتب' : 'راتب جديد' }}</h2>
+      <p class="subtitle">{{ editingId ? 'تحديث بيانات الراتب المحدد' : 'أضف راتبك لهذا الشهر' }}</p>
+    </div>
+    
+    <mat-card class="form-card">
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <div class="form-group">
+            <label>المبلغ</label>
+            <mat-form-field appearance="outline" class="no-subscript">
+              <mat-icon matPrefix>attach_money</mat-icon>
+              <input matInput type="number" formControlName="amount" placeholder="0" />
+            </mat-form-field>
+          </div>
 
-  <mat-card class="add-salary-card">
-    <mat-card-header>
-      <mat-card-title>إضافة راتب جديد</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="save()">
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>المبلغ</mat-label>
-            <input matInput type="number" formControlName="amount" placeholder="0" />
-            <mat-error *ngIf="form.get('amount')?.errors?.['required']">المبلغ مطلوب</mat-error>
-            <mat-error *ngIf="form.get('amount')?.errors?.['min']">المبلغ يجب أن يكون أكبر من صفر</mat-error>
-          </mat-form-field>
+          <div class="form-group">
+            <label>الشهر</label>
+            <mat-form-field appearance="outline" class="no-subscript">
+              <mat-icon matPrefix>calendar_today</mat-icon>
+              <mat-select formControlName="month">
+                <mat-option *ngFor="let m of generateMonthOptions()" [value]="m">
+                  {{ getMonthLabel(m) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>الشهر</mat-label>
-            <mat-select formControlName="month">
-              <mat-option *ngFor="let m of generateMonthOptions()" [value]="m">
-                {{ getMonthLabel(m) }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="form.get('month')?.errors?.['required']">الشهر مطلوب</mat-error>
-          </mat-form-field>
-        </div>
+          <div class="form-group">
+            <label>ملاحظات</label>
+            <mat-form-field appearance="outline" class="no-subscript">
+              <mat-icon matPrefix>notes</mat-icon>
+              <input matInput formControlName="notes" placeholder="وصف مختصر..." />
+            </mat-form-field>
+          </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>ملاحظات (اختياري)</mat-label>
-          <input matInput formControlName="notes" placeholder="مثال: راتب شهر يناير" />
-        </mat-form-field>
+          <div class="form-actions">
+            <button mat-button type="button" *ngIf="editingId" (click)="cancelEdit()" class="cancel-btn">
+              إلغاء
+            </button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="submit-btn">
+              {{ editingId ? 'حفظ التغييرات' : 'إضافة الراتب' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
 
-        <div class="actions">
-          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-            <mat-icon>add</mat-icon>
-            إضافة الراتب
+    <div class="summary-widget">
+      <div class="widget-icon">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <div class="widget-content">
+        <span class="label">إجمالي المدخرات</span>
+        <span class="value">{{ totalAllTime() | number }}</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content: Stats & History -->
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="title-section">
+        <h1>لوحة الرواتب</h1>
+        <p>نظرة عامة على دخلك المالي</p>
+      </div>
+      
+      <div class="year-filter">
+        <span class="filter-label">السنة:</span>
+        <div class="chips">
+          <button 
+            *ngFor="let year of availableYears()" 
+            class="chip" 
+            [class.active]="selectedYear() === year"
+            (click)="setYear(year)">
+            {{ year }}
           </button>
         </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      </div>
+    </header>
 
-  <div class="salary-history">
-    <h2>سجل الرواتب</h2>
-    
-    <div *ngFor="let monthData of salariesByMonth()" class="month-section">
-      <div class="month-header">
-        <h3>{{ getMonthName(monthData.month) }}</h3>
-        <span class="total">إجمالي: {{ monthData.total | number }}</span>
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card primary">
+        <div class="icon-wrapper">
+          <mat-icon>savings</mat-icon>
+        </div>
+        <div class="stat-details">
+          <span class="stat-value">{{ totalForYear() | number }}</span>
+          <span class="stat-label">مجموع {{ selectedYear() }}</span>
+        </div>
       </div>
 
-      <mat-card *ngFor="let salary of monthData.salaries" class="salary-card">
-        <div class="salary-info">
-          <div class="amount">{{ salary.amount | number }}</div>
-          <div class="notes">{{ salary.notes || 'بدون ملاحظات' }}</div>
-          <div class="date">{{ salary.createdAt | date:'medium' }}</div>
+      <div class="stat-card secondary">
+        <div class="icon-wrapper">
+          <mat-icon>analytics</mat-icon>
         </div>
-        <button mat-icon-button color="warn" (click)="deleteSalary(salary.id)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </mat-card>
+        <div class="stat-details">
+          <span class="stat-value">{{ averageMonthly() | number:'1.0-0' }}</span>
+          <span class="stat-label">متوسط شهري</span>
+        </div>
+      </div>
+
+      <div class="stat-card accent">
+        <div class="icon-wrapper">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="stat-details">
+          <span class="stat-value">{{ maxMonthly() | number }}</span>
+          <span class="stat-label">أعلى راتب</span>
+        </div>
+      </div>
     </div>
 
-    <div *ngIf="salariesByMonth().length === 0" class="empty-state">
-      <mat-icon>account_balance_wallet</mat-icon>
-      <p>لا توجد رواتب مسجلة</p>
-      <p>أضف راتبك الشهري للبدء في التتبع</p>
-    </div>
-  </div>
+    <!-- Chart Section -->
+    <section class="chart-section" *ngIf="chartData().length > 0">
+      <h3>التحليل البياني</h3>
+      <div class="chart-container">
+        <div class="bar-group" *ngFor="let data of chartData()">
+          <div class="bar-wrapper" [matTooltip]="data.fullLabel + ': ' + (data.amount | number)">
+            <div class="value-tooltip" *ngIf="data.heightPercentage > 20">{{ data.amount | number:'1.0-1' }}</div>
+            <div class="bar" [style.height.%]="data.heightPercentage"></div>
+          </div>
+          <div class="label">{{ data.label }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transactions List -->
+    <section class="history-section">
+      <h3>سجل المعاملات</h3>
+      
+      <div class="history-list" *ngIf="filteredSalaries().length > 0; else emptyState">
+        <div *ngFor="let monthData of filteredSalaries()" class="month-group">
+          <div class="month-label">{{ getMonthName(monthData.month) }}</div>
+          
+          <div class="transactions">
+            <div *ngFor="let salary of monthData.salaries" class="transaction-item">
+              <div class="trans-icon">
+                <mat-icon>attach_money</mat-icon>
+              </div>
+              
+              <div class="trans-details">
+                <span class="trans-title">راتب شهري</span>
+                <span class="trans-date">{{ salary.createdAt | date:'shortDate' }}</span>
+                <span class="trans-notes" *ngIf="salary.notes">{{ salary.notes }}</span>
+              </div>
+
+              <div class="trans-amount">
+                +{{ salary.amount | number }}
+              </div>
+
+              <div class="trans-actions">
+                <button mat-icon-button (click)="editSalary(salary)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteSalary(salary.id)">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <mat-icon>search_off</mat-icon>
+          </div>
+          <p>لا توجد بيانات لهذه السنة</p>
+        </div>
+      </ng-template>
+    </section>
+  </main>
 </div>

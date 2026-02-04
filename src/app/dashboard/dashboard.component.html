@@ -1,160 +1,152 @@
-<section class="hero">
-  <div class="hero__left">
-    <div class="hero__eyebrow">لوحة التحكم</div>
-    <h1 class="hero__title">اليوم</h1>
-    <div class="hero__date">{{ todayLabel }}</div>
-  </div>
-  <div class="hero__actions">
-    <div class="balance-pill" [class.is-negative]="totalBalance() < 0">
-      <span>الرصيد الكلي</span>
-      <strong>{{ totalBalance() | number: '1.0-2' }} ج.م</strong>
-    </div>
-    <button mat-stroked-button routerLink="/salary" class="hero__btn">
-      <mat-icon>payments</mat-icon>
-      إدارة الراتب
-    </button>
-    <button mat-fab routerLink="/expense" class="hero__fab" color="primary">
-      <mat-icon>add</mat-icon>
-    </button>
-  </div>
-</section>
-
-<div class="dashboard">
-  <div class="dashboard__main">
-    <section class="strip">
-      <div class="strip__item">
-        <div class="strip__label">المصروف اليوم</div>
-        <div class="strip__value">{{ todayTotal() | number: '1.0-2' }} ج.م</div>
+<div class="dashboard-container">
+  
+  <!-- Header Section -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="greeting-section">
+        <span class="greeting-text">{{ greeting() }}</span>
+        <h1 class="date-text">{{ todayLabel }}</h1>
       </div>
-      <div class="strip__item">
-        <div class="strip__label">الحد اليومي</div>
-        <div class="strip__value">{{ dailyLimit() | number: '1.0-2' }} ج.م</div>
-      </div>
-      <div class="strip__item" [class.is-negative]="remaining() < 0">
-        <div class="strip__label">المتبقي اليومي</div>
-        <div class="strip__value">{{ remaining() | number: '1.0-2' }} ج.م</div>
-      </div>
-    </section>
-
-    <section class="panel panel--highlight">
-      <div class="panel__header">
-        <h2>المال</h2>
-        <span>ملخص الراتب والمصروف</span>
-      </div>
-      <div class="highlight">
-        <div class="highlight__main" [class.is-negative]="totalBalance() < 0">
-          <div class="highlight__label">الرصيد الكلي</div>
-          <div class="highlight__value">{{ totalBalance() | number: '1.0-2' }} ج.م</div>
-          <div class="highlight__meta">آخر تحديث: اليوم</div>
-        </div>
-        <div class="highlight__stats">
-          <div class="stat">
-            <span>إجمالي الراتب</span>
-            <strong>{{ totalSalary() | number: '1.0-2' }} ج.م</strong>
-          </div>
-          <div class="stat">
-            <span>راتب هذا الشهر</span>
-            <strong>{{ currentMonthSalary() | number: '1.0-2' }} ج.م</strong>
-          </div>
-          <div class="stat">
-            <span>إجمالي المصروفات</span>
-            <strong>{{ totalExpenses() | number: '1.0-2' }} ج.م</strong>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel panel--progress">
-      <div class="panel__header">
-        <h2>التقدم</h2>
-        <span>اليوم والأسبوع</span>
-      </div>
-      <div class="progress-grid">
-        <div class="card card--progress">
-          <div class="card__header">
-            <div class="card__title">
-              <mat-icon>trending_up</mat-icon>
-              <span>تقدم اليوم</span>
-            </div>
-            <div class="card__meta">{{ (progress() * 100) | number: '1.0-0' }}%</div>
-          </div>
-          <div class="card__body">
-            <div class="bar__track" [attr.data-kind]="progressKind()">
-              <div class="bar__fill" [style.width.%]="progress() * 100"></div>
-            </div>
-            <div class="bar__hint" *ngIf="alertsEnabled() && progress() >= 0.8 && progress() < 1">اقتربت من الحد اليومي</div>
-            <div class="bar__hint" *ngIf="alertsEnabled() && progress() >= 1">تم تجاوز الحد اليومي</div>
-          </div>
-        </div>
-
-        <div class="card card--progress">
-          <div class="card__header">
-            <div class="card__title">
-              <mat-icon>calendar_month</mat-icon>
-              <span>تقدم الأسبوع</span>
-            </div>
-            <div class="card__meta">{{ (weeklyProgress() * 100) | number: '1.0-0' }}%</div>
-          </div>
-          <div class="card__body">
-            <div class="bar__track" [attr.data-kind]="weeklyProgressKind()">
-              <div class="bar__fill" [style.width.%]="weeklyProgress() * 100"></div>
-            </div>
-            <div class="bar__hint" *ngIf="alertsEnabled() && weeklyProgress() >= 0.8 && weeklyProgress() < 1">اقتربت من الحد الأسبوعي</div>
-            <div class="bar__hint" *ngIf="alertsEnabled() && weeklyProgress() >= 1">تم تجاوز الحد الأسبوعي</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <aside class="dashboard__side">
-    <section class="panel panel--week">
-      <div class="panel__header">
-        <h2>الأسبوع</h2>
-        <span>ملخص سريع</span>
-      </div>
-      <div class="week-stats">
-        <div class="week-stats__item">
-          <span>المصروف</span>
-          <strong>{{ weeklyTotal() | number: '1.0-2' }} ج.م</strong>
-        </div>
-        <div class="week-stats__item" [class.is-negative]="weeklyRemaining() < 0">
-          <span>المتبقي</span>
-          <strong>{{ weeklyRemaining() | number: '1.0-2' }} ج.م</strong>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel panel--expenses">
-      <div class="panel__header">
-        <h2>مصروفات اليوم</h2>
-        <button mat-icon-button routerLink="/add-expense" class="card__action">
+      
+      <div class="actions-section">
+        <button mat-stroked-button class="action-btn secondary" routerLink="/salary">
+          <mat-icon>account_balance</mat-icon>
+          <span>الراتب</span>
+        </button>
+        <button mat-flat-button class="action-btn primary" routerLink="/expense">
           <mat-icon>add</mat-icon>
+          <span>جديد</span>
         </button>
       </div>
-      <div class="card__body">
-        <div *ngIf="todayExpenses().length === 0">
-          <div class="empty-state">
-            <mat-icon class="empty-state__icon">receipt_long</mat-icon>
-            <p>لا توجد مصروفات اليوم</p>
-          </div>
+    </div>
+
+    <!-- Main Balance Card -->
+    <div class="balance-overview" [class.negative]="totalBalance() < 0">
+      <div class="balance-label">الرصيد المتاح</div>
+      <div class="balance-amount">
+        {{ totalBalance() | number:'1.0-2' }}
+        <span class="currency">ج.م</span>
+      </div>
+      <div class="balance-trend">
+        <mat-icon>{{ totalBalance() >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+        <span>{{ totalBalance() >= 0 ? 'وضع مالي جيد' : 'تجاوزت الرصيد' }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Quick Stats Grid -->
+  <section class="stats-row">
+    <!-- Daily Limit Card -->
+    <div class="stat-card" [class.warning]="progressKind() === 'warning'" [class.danger]="progressKind() === 'danger'">
+      <div class="stat-icon-wrapper daily">
+        <mat-icon>today</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">المتبقي اليوم</span>
+        <div class="stat-values">
+          <span class="current-value">{{ remaining() | number:'1.0-0' }}</span>
+          <span class="limit-value"> / {{ dailyLimit() | number:'1.0-0' }}</span>
         </div>
-        <div *ngIf="todayExpenses().length > 0">
-          <div class="expense-list">
-            <div *ngFor="let e of todayExpenses()">
-              <div class="expense-item">
-                <div class="expense-item__main">
-                  <span class="expense-item__category">{{ e.category }}</span>
-                  <span class="expense-item__amount">{{ e.amount | number: '1.0-2' }} ج.م</span>
-                </div>
-                <button mat-icon-button (click)="deleteExpense(e.id)" class="expense-item__delete">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-          </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" [style.width.%]="dailyProgressPercent()"></div>
         </div>
       </div>
+    </div>
+
+    <!-- Weekly Limit Card -->
+    <div class="stat-card" [class.warning]="weeklyProgressKind() === 'warning'" [class.danger]="weeklyProgressKind() === 'danger'">
+      <div class="stat-icon-wrapper weekly">
+        <mat-icon>date_range</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">المتبقي أسبوعياً</span>
+        <div class="stat-values">
+          <span class="current-value">{{ weeklyRemaining() | number:'1.0-0' }}</span>
+          <span class="limit-value"> / {{ weeklyLimit() | number:'1.0-0' }}</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" [style.width.%]="weeklyProgressPercent()"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monthly Summary -->
+    <div class="stat-card info">
+      <div class="stat-icon-wrapper monthly">
+        <mat-icon>pie_chart</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">مصروفات الشهر</span>
+        <div class="stat-values">
+          <span class="current-value">{{ totalExpenses() | number:'1.0-0' }}</span>
+          <span class="sub-value">من {{ totalSalary() | number:'1.0-0' }}</span>
+        </div>
+        <div class="mini-status">
+          {{ currentMonthSalary() > 0 ? ((totalExpenses() / currentMonthSalary()) * 100 | number:'1.0-0') : 0 }}% من الدخل
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="main-grid">
+    <!-- Activity Feed / Today's Expenses -->
+    <section class="activity-section">
+      <div class="section-header">
+        <h2>مصروفات اليوم</h2>
+        <span class="total-badge">{{ todayTotal() | number:'1.0-0' }} ج.م</span>
+      </div>
+
+      <div class="transactions-list" *ngIf="todayExpenses().length > 0; else emptyState">
+        <div class="transaction-card" *ngFor="let expense of todayExpenses()">
+          <div class="trans-icon category-icon">
+            <mat-icon>shopping_bag</mat-icon>
+          </div>
+          <div class="trans-info">
+            <div class="trans-category">{{ expense.category }}</div>
+            <div class="trans-time">{{ expense.date | date:'shortTime' }}</div> <!-- Assuming date implies time or just showing date -->
+          </div>
+          <div class="trans-amount">
+            -{{ expense.amount | number:'1.0-0' }}
+          </div>
+          <button mat-icon-button color="warn" class="delete-btn" (click)="deleteExpense(expense.id)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <mat-icon>savings</mat-icon>
+          </div>
+          <h3>لا توجد مصروفات اليوم</h3>
+          <p>بداية جيدة! لم تقم بصرف أي شيء اليوم.</p>
+          <button mat-button color="primary" routerLink="/add-expense">تسجيل مصروف</button>
+        </div>
+      </ng-template>
     </section>
-  </aside>
+
+    <!-- Insights / Tips Panel -->
+    <aside class="insights-section">
+      <div class="insight-card">
+        <div class="card-header">
+          <mat-icon>lightbulb</mat-icon>
+          <h3>نظرة سريعة</h3>
+        </div>
+        <div class="insight-content">
+          <div class="insight-row" [class.good]="progress() < 0.5" [class.bad]="progress() > 0.8">
+            <span class="label">استهلاك اليوم:</span>
+            <span class="value">{{ dailyProgressPercent() }}%</span>
+          </div>
+           <div class="insight-row" [class.good]="weeklyProgress() < 0.5" [class.bad]="weeklyProgress() > 0.8">
+            <span class="label">استهلاك الأسبوع:</span>
+            <span class="value">{{ weeklyProgressPercent() }}%</span>
+          </div>
+          <p class="insight-tip" *ngIf="progress() < 0.5">أداء ممتاز! أنت تقتصد بشكل جيد اليوم.</p>
+          <p class="insight-tip warning" *ngIf="progress() >= 0.5 && progress() <= 0.9">انتبه، لقد استهلكت أكثر من نصف ميزانيتك اليومية.</p>
+          <p class="insight-tip danger" *ngIf="progress() > 0.9">تحذير: أوشكت على تجاوز الحد اليومي!</p>
+        </div>
+      </div>
+    </aside>
+  </div>
 </div>
