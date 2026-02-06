@@ -113,7 +113,9 @@ export class DashboardComponent {
   protected readonly currentMonthSalary = computed(() => this.salaryService.getTotalByMonth(this.currentMonth())());
 
   protected readonly totalExpenses = computed(() => {
-    return this.expenses.expenses().reduce((sum, e) => sum + e.amount, 0);
+    return this.expenses.expenses()
+      .filter(e => !e.archived)
+      .reduce((sum, e) => sum + e.amount, 0);
   });
 
   protected readonly totalBalance = computed(() => {
