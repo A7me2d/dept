@@ -1,42 +1,50 @@
 import { Injectable, inject } from '@angular/core';
 import { signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { db } from './database.service';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly router = inject(Router);
+  private readonly supabase = inject(SupabaseService);
 
-  private readonly _currentUser = signal<string | null>(null);
+  private readonly _currentUser = signal<any>(null);
+  private readonly _sessionChecked = signal(false);
   readonly currentUser = this._currentUser.asReadonly();
   readonly isAuthenticated = computed(() => this._currentUser() !== null);
+  readonly sessionChecked = this._sessionChecked.asReadonly();
 
   constructor() {
     this.checkSession();
+    this.setupAuthListener();
   }
 
-  async login(username: string, password: string): Promise<boolean> {
-    const hashedPassword = this.hashPassword(password);
-    let user = await db.users
-      .where('username')
-      .equals(username)
-      .first();
-
-    // Create default user if not exists (for first-time setup)
-    if (!user && username === 'Ahmed') {
-      await db.users.add({
-        username: 'Ahmed',
-        password: this.hashPassword('Ahmed123')
-      });
-      user = await db.users
-        .where('username')
-        .equals(username)
-        .first();
+  async login(email: string, password: string): Promise<boolean> {
+    const { data, error } = await this.supabase.signIn(email, password);
+    
+    if (error) {
+      console.error('Login error:', error.message);
+      return false;
     }
 
-    if (user && user.password === hashedPassword) {
-      this._currentUser.set(username);
-      localStorage.setItem('auth_user', username);
+    if (data.user) {
+      this._currentUser.set(data.user);
+      return true;
+    }
+
+    return false;
+  }
+
+  async signUp(email: string, password: string, name?: string): Promise<boolean> {
+    const { data, error } = await this.supabase.signUp(email, password, name);
+    
+    if (error) {
+      console.error('Sign up error:', error.message);
+      return false;
+    }
+
+    if (data.user) {
+      this._currentUser.set(data.user);
       return true;
     }
 
@@ -44,25 +52,29 @@ export class AuthService {
   }
 
   async logout(): Promise<void> {
+    const { error } = await this.supabase.signOut();
+    if (error) {
+      console.error('Logout error:', error.message);
+    }
     this._currentUser.set(null);
-    localStorage.removeItem('auth_user');
     await this.router.navigate(['/login']);
   }
 
-  private checkSession(): void {
-    const savedUser = localStorage.getItem('auth_user');
-    if (savedUser) {
-      this._currentUser.set(savedUser);
+  private async checkSession(): Promise<void> {
+    const { session } = await this.supabase.getSession();
+    if (session?.user) {
+      this._currentUser.set(session.user);
     }
+    this._sessionChecked.set(true);
   }
 
-  private hashPassword(password: string): string {
-    let hash = 0;
-    for (let i = 0; i < password.length; i++) {
-      const char = password.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return hash.toString(16);
+  private setupAuthListener(): void {
+    this.supabase.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        this._currentUser.set(session.user);
+      } else if (event === 'SIGNED_OUT') {
+        this._currentUser.set(null);
+      }
+    });
   }
 }

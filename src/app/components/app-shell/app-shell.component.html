@@ -8,9 +8,12 @@
       </div>
     </div>
     @if (isAuthenticated()) {
-      <button mat-icon-button (click)="logout()" class="topbar__logout">
-        <mat-icon>logout</mat-icon>
-      </button>
+      <div class="user-info">
+        <span class="user-name">{{ userName() }}</span>
+        <button mat-icon-button (click)="logout()" class="topbar__logout">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
     }
   </header>
 

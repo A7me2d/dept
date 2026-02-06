@@ -3,13 +3,18 @@
     <div class="login-card__header">
       <mat-icon class="login-card__icon">account_balance_wallet</mat-icon>
       <h1 class="login-card__title">مصروفاتي</h1>
-      <p class="login-card__subtitle">تسجيل الدخول</p>
+      <p class="login-card__subtitle">{{ isSignup ? 'إنشاء حساب جديد' : 'تسجيل الدخول' }}</p>
     </div>
 
-    <form class="login-card__form" [formGroup]="form" (ngSubmit)="login()">
+    <form class="login-card__form" [formGroup]="form" (ngSubmit)="isSignup ? signup() : login()">
+      <label class="field" *ngIf="isSignup">
+        <div class="field__label">الاسم</div>
+        <input class="input" type="text" formControlName="name" placeholder="أدخل اسمك" />
+      </label>
+
       <label class="field">
-        <div class="field__label">اسم المستخدم</div>
-        <input class="input" type="text" formControlName="username" placeholder="أدخل اسم المستخدم" />
+        <div class="field__label">البريد الإلكتروني</div>
+        <input class="input" type="email" formControlName="email" placeholder="أدخل البريد الإلكتروني" />
       </label>
 
       <label class="field">
@@ -17,7 +22,13 @@
         <input class="input" type="password" formControlName="password" placeholder="أدخل كلمة المرور" />
       </label>
 
-      <button class="btn btn--primary btn--full" type="submit">دخول</button>
+      <button class="btn btn--primary btn--full" type="submit">{{ isSignup ? 'إنشاء حساب' : 'دخول' }}</button>
     </form>
+
+    <div class="login-card__toggle">
+      <!-- <button class="link-btn" type="button" (click)="toggleMode()">
+        {{ isSignup ? 'لديك حساب بالفعل؟ سجل دخول' : 'ليس لديك حساب؟ أنشئ حساب جديد' }}
+      </button> -->
+    </div>
   </div>
 </div>

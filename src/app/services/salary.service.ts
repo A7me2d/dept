@@ -1,18 +1,16 @@
-import { Injectable, computed, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, computed, signal, inject } from '@angular/core';
 import { Salary, NewSalaryInput, UpdateSalaryInput } from '../models/salary.model';
-import { SettingsService } from './settings.service';
+import { SupabaseService } from './supabase.service';
+import { AuthService } from './auth.service';
 import { format } from 'date-fns';
-
-const API_URL = 'https://66cb41954290b1c4f199e054.mockapi.io/sitting';
 
 @Injectable({ providedIn: 'root' })
 export class SalaryService {
-  private readonly http = inject(HttpClient);
-  private readonly settings = inject(SettingsService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly auth = inject(AuthService);
 
-  readonly loading = computed(() => this.settings.loading());
-  readonly salaries = computed(() => this.settings.settings().salaries);
+  readonly loading = signal(false);
+  readonly salaries = signal<Salary[]>([]);
 
   readonly totalSalary = computed(() => {
     return this.salaries().reduce((sum, s) => sum + s.amount, 0);
@@ -32,7 +30,32 @@ export class SalaryService {
       .sort((a, b) => b.month.localeCompare(a.month));
   });
 
+  async refresh() {
+    this.loading.set(true);
+    try {
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) {
+        this.salaries.set([]);
+        return;
+      }
+
+      const { data, error } = await this.supabase.client
+        .from('salaries')
+        .select('*')
+        .eq('user_id', userId)
+        .order('month', { ascending: false });
+
+      if (error) throw error;
+      this.salaries.set(data || []);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
   async add(input: NewSalaryInput) {
+    const userId = this.auth.currentUser()?.id;
+    if (!userId) throw new Error('User not authenticated');
+
     const now = new Date();
     const salary: Salary = {
       id: crypto.randomUUID(),
@@ -43,55 +66,66 @@ export class SalaryService {
       updatedAt: now.toISOString()
     };
 
-    const currentSettings = this.settings.settings();
-    const updatedSettings = {
-      ...currentSettings,
-      salaries: [...currentSettings.salaries, salary],
-      updatedAt: now.toISOString()
-    };
+    const { data, error } = await this.supabase.client
+      .from('salaries')
+      .insert({
+        user_id: userId,
+        amount: salary.amount,
+        month: salary.month,
+        notes: salary.notes
+      })
+      .select()
+      .single();
 
-    await this.http.put(`${API_URL}/settings`, updatedSettings).toPromise();
-    this.settings.settings.set(updatedSettings);
-    return salary;
+    if (error) throw error;
+    await this.refresh();
+    return data;
   }
 
   async update(input: UpdateSalaryInput) {
-    const currentSettings = this.settings.settings();
-    const existing = currentSettings.salaries.find((s) => s.id === input.id);
-    if (!existing) return null;
+    const userId = this.auth.currentUser()?.id;
+    if (!userId) throw new Error('User not authenticated');
 
-    const nowIso = new Date().toISOString();
-    const updated: Salary = {
-      ...existing,
-      ...input,
-      updatedAt: nowIso
-    };
+    const { data, error } = await this.supabase.client
+      .from('salaries')
+      .update({
+        amount: input.amount,
+        month: input.month,
+        notes: input.notes
+      })
+      .eq('id', input.id)
+      .eq('user_id', userId)
+      .select()
+      .single();
 
-    const updatedSettings = {
-      ...currentSettings,
-      salaries: currentSettings.salaries.map((s) => (s.id === input.id ? updated : s)),
-      updatedAt: nowIso
-    };
-
-    await this.http.put(`${API_URL}/settings`, updatedSettings).toPromise();
-    this.settings.settings.set(updatedSettings);
-    return updated;
+    if (error) throw error;
+    await this.refresh();
+    return data;
   }
 
   async remove(id: string) {
-    const currentSettings = this.settings.settings();
-    const updatedSettings = {
-      ...currentSettings,
-      salaries: currentSettings.salaries.filter((s) => s.id !== id),
-      updatedAt: new Date().toISOString()
-    };
+    const userId = this.auth.currentUser()?.id;
+    if (!userId) throw new Error('User not authenticated');
 
-    await this.http.put(`${API_URL}/settings`, updatedSettings).toPromise();
-    this.settings.settings.set(updatedSettings);
+    const { error } = await this.supabase.client
+      .from('salaries')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+    await this.refresh();
   }
 
   async getById(id: string) {
-    return this.salaries().find((s) => s.id === id) || null;
+    const { data, error } = await this.supabase.client
+      .from('salaries')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   getSalaryByMonth(month: string) {

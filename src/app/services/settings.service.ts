@@ -1,56 +1,107 @@
-import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, signal, inject } from '@angular/core';
 import { Settings } from '../models/settings.model';
+import { SupabaseService } from './supabase.service';
+import { AuthService } from './auth.service';
 
-const API_URL = 'https://66cb41954290b1c4f199e054.mockapi.io/sitting';
-
-const DEFAULT_SETTINGS: Settings = {
-  id: 'settings',
-  dailyLimit: 500,
-  weeklyLimit: 3000,
-  alertsEnabled: true,
-  salaries: [],
+const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {
+  dailyLimit: 0,
+  weeklyLimit: 0,
+  currency: 'ج.م',
   updatedAt: new Date().toISOString()
 };
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  readonly loading = signal(false);
-  readonly settings = signal<Settings>(DEFAULT_SETTINGS);
+  private readonly supabase = inject(SupabaseService);
+  private readonly auth = inject(AuthService);
 
-  constructor(private http: HttpClient) {
-    void this.load();
-  }
+  readonly loading = signal(false);
+  readonly settings = signal<Settings>({
+    id: '',
+    dailyLimit: DEFAULT_SETTINGS.dailyLimit,
+    weeklyLimit: DEFAULT_SETTINGS.weeklyLimit,
+    currency: DEFAULT_SETTINGS.currency,
+    updatedAt: new Date().toISOString()
+  });
 
   async load() {
     this.loading.set(true);
     try {
-      const items = await this.http.get<Settings[]>(API_URL).toPromise();
-      if (items && items.length > 0) {
-        const loadedSettings = items[0];
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) return;
+
+      const { data, error } = await this.supabase.client
+        .from('user_settings')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        // No settings found, create default
+        await this.createDefault(userId);
+      } else if (data) {
         this.settings.set({
-          ...loadedSettings,
-          salaries: loadedSettings.salaries || []
+          id: data.id,
+          dailyLimit: data.daily_limit,
+          weeklyLimit: data.weekly_limit,
+          currency: data.currency,
+          updatedAt: data.updated_at
         });
-      } else {
-        const created = await this.http.post<Settings>(API_URL, DEFAULT_SETTINGS).toPromise();
-        this.settings.set(created || DEFAULT_SETTINGS);
       }
     } finally {
       this.loading.set(false);
     }
   }
 
+  private async createDefault(userId: string) {
+    const { data, error } = await this.supabase.client
+      .from('user_settings')
+      .insert({
+        user_id: userId,
+        daily_limit: DEFAULT_SETTINGS.dailyLimit,
+        weekly_limit: DEFAULT_SETTINGS.weeklyLimit,
+        currency: DEFAULT_SETTINGS.currency
+      })
+      .select()
+      .single();
+
+    if (data) {
+      this.settings.set({
+        id: data.id,
+        dailyLimit: data.daily_limit,
+        weeklyLimit: data.weekly_limit,
+        currency: data.currency,
+        updatedAt: data.updated_at
+      });
+    }
+  }
+
   async update(patch: Partial<Omit<Settings, 'id'>>) {
-    const next: Settings = {
-      ...this.settings(),
-      ...patch,
-      updatedAt: new Date().toISOString()
-    };
+    const userId = this.auth.currentUser()?.id;
+    if (!userId) throw new Error('User not authenticated');
 
-    await this.http.put(`${API_URL}/${next.id}`, next).toPromise();
-    this.settings.set(next);
+    const { data, error } = await this.supabase.client
+      .from('user_settings')
+      .update({
+        daily_limit: patch.dailyLimit,
+        weekly_limit: patch.weeklyLimit,
+        currency: patch.currency
+      })
+      .eq('user_id', userId)
+      .select()
+      .single();
 
-    return next;
+    if (error) throw error;
+    if (data) {
+      this.settings.set({
+        id: data.id,
+        dailyLimit: data.daily_limit,
+        weeklyLimit: data.weekly_limit,
+        currency: data.currency,
+        updatedAt: data.updated_at
+      });
+    }
+
+    return this.settings();
   }
 }

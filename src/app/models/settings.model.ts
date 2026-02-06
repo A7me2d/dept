@@ -1,10 +1,7 @@
-import { Salary } from './salary.model';
-
 export interface Settings {
-  id: 'settings';
+  id: string;
   dailyLimit: number;
   weeklyLimit: number;
-  alertsEnabled: boolean;
-  salaries: Salary[];
+  currency: string;
   updatedAt: string;
 }

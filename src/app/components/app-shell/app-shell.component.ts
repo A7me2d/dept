@@ -20,6 +20,7 @@ export class AppShellComponent {
 
   protected readonly isAuthenticated = this.auth.isAuthenticated;
   protected readonly currentUser = this.auth.currentUser;
+  protected readonly userName = computed(() => this.currentUser()?.user_metadata?.name || this.currentUser()?.email?.split('@')[0] || 'مستخدم');
 
   async logout() {
     await this.auth.logout();

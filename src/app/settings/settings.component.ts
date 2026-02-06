@@ -22,7 +22,7 @@ export class SettingsComponent {
   protected readonly form = this.fb.group({
     dailyLimit: this.fb.control<number>(this.current().dailyLimit, [Validators.required, Validators.min(0)]),
     weeklyLimit: this.fb.control<number>(this.current().weeklyLimit, [Validators.required, Validators.min(0)]),
-    alertsEnabled: this.fb.control<boolean>(this.current().alertsEnabled)
+    currency: this.fb.control<string>(this.current().currency)
   });
 
   constructor() {
@@ -33,7 +33,7 @@ export class SettingsComponent {
         {
           dailyLimit: s.dailyLimit,
           weeklyLimit: s.weeklyLimit,
-          alertsEnabled: s.alertsEnabled
+          currency: s.currency
         },
         { emitEvent: false }
       );

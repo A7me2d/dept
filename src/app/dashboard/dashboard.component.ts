@@ -1,4 +1,4 @@
-import { DecimalPipe, NgFor, NgIf, DatePipe } from '@angular/common';
+import { DecimalPipe, NgFor, NgIf } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { endOfWeek, format, startOfWeek } from 'date-fns';
@@ -9,11 +9,10 @@ import { SettingsService } from '../services/settings.service';
 import { ToastService } from '../services/toast.service';
 import { ConfirmDialogService } from '../services/confirm-dialog.service';
 import { SalaryService } from '../services/salary.service';
-
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgIf, NgFor, RouterLink, DecimalPipe, DatePipe, MatIconModule, MatButtonModule],
+  imports: [NgIf, NgFor, RouterLink, DecimalPipe, MatIconModule, MatButtonModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -26,6 +25,18 @@ export class DashboardComponent {
 
   private readonly now = new Date();
 
+  constructor() {
+    this.loadData();
+  }
+
+  private async loadData() {
+    await Promise.all([
+      this.expenses.refresh(),
+      this.salaryService.refresh(),
+      this.settings.load()
+    ]);
+  }
+
   protected readonly todayKey = format(this.now, 'yyyy-MM-dd');
   protected readonly todayLabel = new Intl.DateTimeFormat('ar-EG', {
     weekday: 'long',
@@ -33,8 +44,6 @@ export class DashboardComponent {
     month: 'long',
     day: 'numeric'
   }).format(this.now);
-
-  protected readonly alertsEnabled = computed(() => this.settings.settings().alertsEnabled);
 
   protected readonly dailyLimit = computed(() => this.settings.settings().dailyLimit);
   protected readonly weeklyLimit = computed(() => this.settings.settings().weeklyLimit);

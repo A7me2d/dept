@@ -1,12 +1,14 @@
-import { Injectable, computed, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, computed, signal, inject } from '@angular/core';
 import { format } from 'date-fns';
 import { Expense, NewExpenseInput, UpdateExpenseInput } from '../models/expense.model';
-
-const API_URL = 'https://66cb41954290b1c4f199e054.mockapi.io/data';
+import { SupabaseService } from './supabase.service';
+import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ExpenseService {
+  private readonly supabase = inject(SupabaseService);
+  private readonly auth = inject(AuthService);
+
   readonly loading = signal(false);
   readonly expenses = signal<Expense[]>([]);
 
@@ -23,23 +25,38 @@ export class ExpenseService {
       .sort((a, b) => b.date.localeCompare(a.date));
   });
 
-  constructor(private http: HttpClient) {
-    void this.refresh();
-  }
-
   async refresh() {
     this.loading.set(true);
     try {
-      const items = await this.http.get<Expense[]>(API_URL).toPromise();
-      this.expenses.set(items || []);
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) {
+        this.expenses.set([]);
+        return;
+      }
+
+      const { data, error } = await this.supabase.client
+        .from('expenses')
+        .select('*')
+        .eq('user_id', userId)
+        .order('date', { ascending: false })
+        .order('time', { ascending: false });
+
+      if (error) throw error;
+      this.expenses.set(data || []);
     } finally {
       this.loading.set(false);
     }
   }
 
   async getById(id: string) {
-    const items = await this.http.get<Expense>(`${API_URL}/${id}`).toPromise();
-    return items || null;
+    const { data, error } = await this.supabase.client
+      .from('expenses')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   expensesByDate(date: string) {
@@ -56,6 +73,9 @@ export class ExpenseService {
   }
 
   async add(input: NewExpenseInput) {
+    const userId = this.auth.currentUser()?.id;
+    if (!userId) throw new Error('User not authenticated');
+
     const now = new Date();
     const expense: Expense = {
       id: crypto.randomUUID(),
@@ -70,33 +90,62 @@ export class ExpenseService {
       updatedAt: now.toISOString()
     };
 
-    const created = await this.http.post<Expense>(API_URL, expense).toPromise();
-    if (created) {
-      await this.refresh();
-      return created;
-    }
-    return expense;
+    const { data, error } = await this.supabase.client
+      .from('expenses')
+      .insert({
+        user_id: userId,
+        amount: expense.amount,
+        category: expense.category,
+        description: expense.description,
+        date: expense.date,
+        time: expense.time,
+        payment_method: expense.paymentMethod,
+        archived: false
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    await this.refresh();
+    return data;
   }
 
   async update(input: UpdateExpenseInput) {
-    const existing = await this.getById(input.id);
-    if (!existing) return null;
+    const userId = this.auth.currentUser()?.id;
+    if (!userId) throw new Error('User not authenticated');
 
-    const nowIso = new Date().toISOString();
-    const updated: Expense = {
-      ...existing,
-      ...input,
-      updatedAt: nowIso
-    };
+    const { data, error } = await this.supabase.client
+      .from('expenses')
+      .update({
+        amount: input.amount,
+        category: input.category,
+        description: input.description,
+        date: input.date,
+        time: input.time,
+        payment_method: input.paymentMethod,
+        archived: input.archived
+      })
+      .eq('id', input.id)
+      .eq('user_id', userId)
+      .select()
+      .single();
 
-    await this.http.put(`${API_URL}/${input.id}`, updated).toPromise();
+    if (error) throw error;
     await this.refresh();
-
-    return updated;
+    return data;
   }
 
   async remove(id: string) {
-    await this.http.delete(`${API_URL}/${id}`).toPromise();
+    const userId = this.auth.currentUser()?.id;
+    if (!userId) throw new Error('User not authenticated');
+
+    const { error } = await this.supabase.client
+      .from('expenses')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) throw error;
     await this.refresh();
   }
 
