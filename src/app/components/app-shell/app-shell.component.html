@@ -1,7 +1,10 @@
 <div class="shell">
   <header class="topbar">
     <div class="brand">
-      <mat-icon class="brand__icon">account_balance_wallet</mat-icon>
+      <div class="brand__icon-wrapper">
+        <mat-icon class="brand__icon">account_balance_wallet</mat-icon>
+        <div class="brand__icon-glow"></div>
+      </div>
       <div class="brand__text">
         <div class="brand__title">{{ title() }}</div>
         <div class="brand__subtitle">تتبع المصروفات اليومية</div>
@@ -9,8 +12,17 @@
     </div>
     @if (isAuthenticated()) {
       <div class="user-info">
-        <span class="user-name">{{ userName() }}</span>
-        <button mat-icon-button (click)="logout()" class="topbar__logout">
+        <button mat-icon-button (click)="toggleTheme()" class="topbar__theme" matTooltip="تبديل الوضع">
+          <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        </button>
+        <div class="user-avatar">
+          <mat-icon>person</mat-icon>
+        </div>
+        <div class="user-details">
+          <span class="user-name">{{ userName() }}</span>
+          <span class="user-status">متصل</span>
+        </div>
+        <button mat-icon-button (click)="logout()" class="topbar__logout" matTooltip="تسجيل الخروج">
           <mat-icon>logout</mat-icon>
         </button>
       </div>
@@ -26,5 +38,11 @@
   }
   <app-toast></app-toast>
 
-  <footer class="footer">© {{ year() }} {{ title() }}</footer>
+  <footer class="footer">
+    <div class="footer__content">
+      <span class="footer__text">© {{ year() }} {{ title() }}</span>
+      <span class="footer__separator">•</span>
+      <span class="footer__version">الإصدار 2.0</span>
+    </div>
+  </footer>
 </div>

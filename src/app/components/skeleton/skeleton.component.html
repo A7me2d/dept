@@ -1,0 +1,45 @@
+<!-- Card Skeleton -->
+@if (type() === 'card') {
+  @for (i of items(); track i) {
+    <div class="skeleton skeleton-card" [style.width.%]="width()" [style.height]="height()">
+      <div class="skeleton-card__header">
+        <div class="skeleton skeleton-avatar"></div>
+        <div class="skeleton skeleton-text" style="width: 60%"></div>
+      </div>
+      <div class="skeleton skeleton-text" style="width: 80%"></div>
+      <div class="skeleton skeleton-text" style="width: 40%"></div>
+    </div>
+  }
+}
+
+<!-- List Skeleton -->
+@if (type() === 'list') {
+  @for (i of items(); track i) {
+    <div class="skeleton skeleton-list-item" [style.width.%]="width()">
+      <div class="skeleton skeleton-avatar"></div>
+      <div class="skeleton skeleton-text" style="width: 70%"></div>
+      <div class="skeleton skeleton-text" style="width: 30%"></div>
+    </div>
+  }
+}
+
+<!-- Text Skeleton -->
+@if (type() === 'text') {
+  @for (i of items(); track i) {
+    <div class="skeleton skeleton-text" [style.width.%]="width()" [style.height]="height()"></div>
+  }
+}
+
+<!-- Avatar Skeleton -->
+@if (type() === 'avatar') {
+  @for (i of items(); track i) {
+    <div class="skeleton skeleton-avatar" [style.width]="height()" [style.height]="height()"></div>
+  }
+}
+
+<!-- Button Skeleton -->
+@if (type() === 'button') {
+  @for (i of items(); track i) {
+    <div class="skeleton skeleton-button" [style.width.%]="width()" [style.height]="height()"></div>
+  }
+}

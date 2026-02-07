@@ -1,0 +1,95 @@
+/* ============================================
+   SKELETON LOADING COMPONENT
+   Modern Design System
+   ============================================ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-primary) 50%,
+    var(--bg-secondary) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* ============================================
+   SKELETON CARD
+   ============================================ */
+
+.skeleton-card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.skeleton-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* ============================================
+   SKELETON LIST ITEM
+   ============================================ */
+
+.skeleton-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   SKELETON AVATAR
+   ============================================ */
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   SKELETON TEXT
+   ============================================ */
+
+.skeleton-text {
+  height: 16px;
+  border-radius: var(--radius-sm);
+  flex: 1;
+}
+
+/* ============================================
+   SKELETON BUTTON
+   ============================================ */
+
+.skeleton-button {
+  height: 40px;
+  border-radius: var(--radius-md);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

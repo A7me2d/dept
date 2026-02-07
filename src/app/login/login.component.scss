@@ -1,100 +1,291 @@
+/* ============================================
+   LOGIN COMPONENT
+   Modern Design System
+   ============================================ */
+
 .login-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  background: var(--bg);
+  padding: 1rem;
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
 }
+
+/* Animated background */
+.login-page::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--primary) 5%, transparent) 0%, transparent 50%),
+              radial-gradient(circle at 70% 70%, color-mix(in srgb, var(--secondary) 5%, transparent) 0%, transparent 50%);
+  animation: float 10s ease-in-out infinite;
+}
+
+.login-page::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -30%;
+  width: 160%;
+  height: 160%;
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--success) 3%, transparent) 0%, transparent 50%);
+  animation: float 15s ease-in-out infinite reverse;
+}
+
+/* ============================================
+   LOGIN CARD
+   ============================================ */
 
 .login-card {
   width: 100%;
-  max-width: 400px;
-  background: var(--surface);
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-width: 420px;
+  background: color-mix(in srgb, var(--surface) 95%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-radius: var(--radius-2xl);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-2xl);
+  border: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+  animation: scaleIn 0.4s ease-out;
 }
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+}
+
+/* ============================================
+   LOGIN CARD HEADER
+   ============================================ */
 
 .login-card__header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 2rem;
+  
 }
 
 .login-card__icon {
-  font-size: 48px;
-  width: 48px;
-  height: 48px;
-  color: var(--primary);
-  margin-bottom: 16px;
+  font-size: 56px;
+  width: 56px;
+  height: 56px;
+    color: black;
+  margin-bottom: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glow);
+  position: relative;
+  animation: float 3s ease-in-out infinite;
+  
+}
+
+.login-card__icon::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--radius-xl);
+  background: var(--primary-gradient);
+  opacity: 0.3;
+  filter: blur(8px);
+  z-index: -1;
 }
 
 .login-card__title {
-  margin: 0 0 8px;
-  font-size: 24px;
-  font-weight: 600;
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
 }
 
 .login-card__subtitle {
   margin: 0;
-  color: var(--text-muted);
-  font-size: 14px;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 500;
 }
+
+/* ============================================
+   LOGIN CARD FORM
+   ============================================ */
 
 .login-card__form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1.25rem;
 }
+
+/* ============================================
+   FIELD
+   ============================================ */
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
+  position: relative;
 }
 
 .field__label {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
 }
+
+.field__label::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+/* ============================================
+   INPUT
+   ============================================ */
 
 .input {
-  padding: 12px 16px;
+  width: 100%;
+  padding: 0.875rem 1rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1rem;
   outline: none;
-
-  &:focus {
-    border-color: var(--primary);
-  }
-
-  &::placeholder {
-    color: var(--text-muted);
-  }
+  transition: all 0.25s ease;
+  font-family: inherit;
 }
 
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.input:focus {
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+  transform: translateY(-1px);
+}
+
+.input:hover:not(:focus) {
+  border-color: var(--primary-light);
+}
+
+/* ============================================
+   BUTTON
+   ============================================ */
+
 .btn {
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--radius-md);
   border: none;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
 
-  &--primary {
-    background: var(--primary);
-    color: white;
+.btn:active {
+  transform: scale(0.98);
+}
 
-    &:hover {
-      background: var(--primary-hover);
-    }
+.btn--primary {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn--primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn--full {
+  width: 100%;
+}
+
+/* ============================================
+   LOGIN CARD TOGGLE
+   ============================================ */
+
+.login-card__toggle {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+}
+
+.link-btn:hover {
+  background: color-mix(in srgb, var(--primary-light) 15%, transparent);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2rem 1.5rem;
   }
 
-  &--full {
-    width: 100%;
+  .login-card__icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .login-card__title {
+    font-size: 1.5rem;
+  }
+
+  .input {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.9375rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9375rem;
   }
 }

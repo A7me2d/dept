@@ -123,10 +123,10 @@ export class DashboardComponent {
   });
 
   async deleteExpense(id: string) {
-    const ok = await this.confirm.confirm('هل تريد حذف هذا المصروف؟', 'تأكيد الحذف');
+    const ok = await this.confirm.confirm('هل تريد حذف هذا المصروف نهائياً؟', 'تأكيد الحذف');
     if (!ok) return;
 
-    await this.expenses.archive(id);
-    this.toast.show('تم أرشفة المصروف (يمكن التراجع)', 'success');
+    await this.expenses.hardDelete(id);
+    this.toast.show('تم حذف المصروف نهائياً', 'success');
   }
 }

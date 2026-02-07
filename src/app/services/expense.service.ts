@@ -153,6 +153,20 @@ export class ExpenseService {
     await this.update({ id, archived: true });
   }
 
+  async hardDelete(id: string) {
+    const userId = this.auth.currentUser()?.id;
+    if (!userId) throw new Error('User not authenticated');
+
+    const { error } = await this.supabase.client
+      .from('expenses')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+    await this.refresh();
+  }
+
   createDefaultsForNow(partial?: Partial<NewExpenseInput>): NewExpenseInput {
     const now = new Date();
     return {
