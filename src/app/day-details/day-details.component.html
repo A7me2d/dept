@@ -36,8 +36,9 @@
       <button mat-icon-button [routerLink]="['/expense', e.id]">
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-icon-button type="button" (click)="deleteExpense(e.id)">
-        <mat-icon>delete</mat-icon>
+      <button mat-icon-button type="button" (click)="deleteExpense(e.id)" [disabled]="loading()">
+        <mat-icon *ngIf="!loading()">delete</mat-icon>
+        <span *ngIf="loading()" class="animate-spin inline-block w-5 h-5 border-2 border-gray-500 border-t-transparent rounded-full"></span>
       </button>
     </div>
   </div>

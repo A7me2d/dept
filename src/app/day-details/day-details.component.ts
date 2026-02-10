@@ -23,6 +23,8 @@ export class DayDetailsComponent {
   private readonly toast = inject(ToastService);
   private readonly confirm = inject(ConfirmDialogService);
 
+  readonly loading = this.expenses.loading;
+
   protected readonly date = toSignal(this.route.paramMap.pipe(map((pm) => pm.get('date') ?? '')), {
     initialValue: ''
   });

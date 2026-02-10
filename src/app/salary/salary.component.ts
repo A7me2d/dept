@@ -43,6 +43,8 @@ export class SalaryComponent {
   private readonly confirm = inject(ConfirmDialogService);
   private readonly router = inject(Router);
 
+  readonly loading = this.salaryService.loading;
+
   // Filter state
   protected readonly selectedYear = signal<string>(new Date().getFullYear().toString());
 

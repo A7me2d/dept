@@ -13,6 +13,8 @@ import { ExpenseService } from '../services/expense.service';
 export class HistoryComponent {
   private readonly expenses = inject(ExpenseService);
 
+  readonly loading = this.expenses.loading;
+
   protected readonly days = computed(() => this.expenses.groupedDailyTotals());
 
   private readonly fmt = new Intl.DateTimeFormat('ar-EG', {

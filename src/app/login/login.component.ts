@@ -27,6 +27,7 @@ export class LoginComponent {
   });
 
   isSignup = false;
+  readonly loading = this.auth.loading;
 
   async login() {
     if (this.form.invalid) {

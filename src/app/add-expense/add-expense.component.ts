@@ -25,6 +25,8 @@ export class AddExpenseComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
+  readonly loading = this.expenses.loading;
+
   protected readonly id = toSignal(
     this.route.paramMap.pipe(map((pm) => pm.get('id'))),
     { initialValue: null }

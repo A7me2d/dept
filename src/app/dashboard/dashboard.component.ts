@@ -25,6 +25,8 @@ export class DashboardComponent {
 
   private readonly now = new Date();
 
+  readonly loading = computed(() => this.expenses.loading() || this.settings.loading() || this.salaryService.loading());
+
   constructor() {
     this.loadData();
   }

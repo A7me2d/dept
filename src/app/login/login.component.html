@@ -22,7 +22,10 @@
         <input class="input" type="password" formControlName="password" placeholder="أدخل كلمة المرور" />
       </label>
 
-      <button class="btn btn--primary btn--full" type="submit">{{ isSignup ? 'إنشاء حساب' : 'دخول' }}</button>
+      <button class="btn btn--primary btn--full" type="submit" [disabled]="loading()">
+        <span *ngIf="loading()" class="animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+        {{ loading() ? 'جاري التحميل...' : (isSignup ? 'إنشاء حساب' : 'دخول') }}
+      </button>
     </form>
 
     <div class="login-card__toggle">

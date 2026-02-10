@@ -53,68 +53,83 @@ export class SalaryService {
   }
 
   async add(input: NewSalaryInput) {
-    const userId = this.auth.currentUser()?.id;
-    if (!userId) throw new Error('User not authenticated');
+    this.loading.set(true);
+    try {
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) throw new Error('User not authenticated');
 
-    const now = new Date();
-    const salary: Salary = {
-      id: crypto.randomUUID(),
-      amount: input.amount,
-      month: input.month,
-      notes: input.notes,
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString()
-    };
+      const now = new Date();
+      const salary: Salary = {
+        id: crypto.randomUUID(),
+        amount: input.amount,
+        month: input.month,
+        notes: input.notes,
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString()
+      };
 
-    const { data, error } = await this.supabase.client
-      .from('salaries')
-      .insert({
-        user_id: userId,
-        amount: salary.amount,
-        month: salary.month,
-        notes: salary.notes
-      })
-      .select()
-      .single();
+      const { data, error } = await this.supabase.client
+        .from('salaries')
+        .insert({
+          user_id: userId,
+          amount: salary.amount,
+          month: salary.month,
+          notes: salary.notes
+        })
+        .select()
+        .single();
 
-    if (error) throw error;
-    await this.refresh();
-    return data;
+      if (error) throw error;
+      await this.refresh();
+      return data;
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async update(input: UpdateSalaryInput) {
-    const userId = this.auth.currentUser()?.id;
-    if (!userId) throw new Error('User not authenticated');
+    this.loading.set(true);
+    try {
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) throw new Error('User not authenticated');
 
-    const { data, error } = await this.supabase.client
-      .from('salaries')
-      .update({
-        amount: input.amount,
-        month: input.month,
-        notes: input.notes
-      })
-      .eq('id', input.id)
-      .eq('user_id', userId)
-      .select()
-      .single();
+      const { data, error } = await this.supabase.client
+        .from('salaries')
+        .update({
+          amount: input.amount,
+          month: input.month,
+          notes: input.notes
+        })
+        .eq('id', input.id)
+        .eq('user_id', userId)
+        .select()
+        .single();
 
-    if (error) throw error;
-    await this.refresh();
-    return data;
+      if (error) throw error;
+      await this.refresh();
+      return data;
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async remove(id: string) {
-    const userId = this.auth.currentUser()?.id;
-    if (!userId) throw new Error('User not authenticated');
+    this.loading.set(true);
+    try {
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) throw new Error('User not authenticated');
 
-    const { error } = await this.supabase.client
-      .from('salaries')
-      .delete()
-      .eq('id', id)
-      .eq('user_id', userId);
+      const { error } = await this.supabase.client
+        .from('salaries')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', userId);
 
-    if (error) throw error;
-    await this.refresh();
+      if (error) throw error;
+      await this.refresh();
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async getById(id: string) {

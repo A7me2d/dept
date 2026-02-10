@@ -77,31 +77,36 @@ export class SettingsService {
   }
 
   async update(patch: Partial<Omit<Settings, 'id'>>) {
-    const userId = this.auth.currentUser()?.id;
-    if (!userId) throw new Error('User not authenticated');
+    this.loading.set(true);
+    try {
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) throw new Error('User not authenticated');
 
-    const { data, error } = await this.supabase.client
-      .from('user_settings')
-      .update({
-        daily_limit: patch.dailyLimit,
-        weekly_limit: patch.weeklyLimit,
-        currency: patch.currency
-      })
-      .eq('user_id', userId)
-      .select()
-      .single();
+      const { data, error } = await this.supabase.client
+        .from('user_settings')
+        .update({
+          daily_limit: patch.dailyLimit,
+          weekly_limit: patch.weeklyLimit,
+          currency: patch.currency
+        })
+        .eq('user_id', userId)
+        .select()
+        .single();
 
-    if (error) throw error;
-    if (data) {
-      this.settings.set({
-        id: data.id,
-        dailyLimit: data.daily_limit,
-        weeklyLimit: data.weekly_limit,
-        currency: data.currency,
-        updatedAt: data.updated_at
-      });
+      if (error) throw error;
+      if (data) {
+        this.settings.set({
+          id: data.id,
+          dailyLimit: data.daily_limit,
+          weeklyLimit: data.weekly_limit,
+          currency: data.currency,
+          updatedAt: data.updated_at
+        });
+      }
+
+      return this.settings();
+    } finally {
+      this.loading.set(false);
     }
-
-    return this.settings();
   }
 }

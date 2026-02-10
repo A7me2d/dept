@@ -1,13 +1,14 @@
 import { Component, computed, effect, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { NgIf } from '@angular/common';
 import { SettingsService } from '../services/settings.service';
 import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, NgIf],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
@@ -16,6 +17,8 @@ export class SettingsComponent {
   private readonly settings = inject(SettingsService);
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
+
+  readonly loading = this.settings.loading;
 
   protected readonly current = computed(() => this.settings.settings());
 

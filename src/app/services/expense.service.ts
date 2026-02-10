@@ -73,80 +73,95 @@ export class ExpenseService {
   }
 
   async add(input: NewExpenseInput) {
-    const userId = this.auth.currentUser()?.id;
-    if (!userId) throw new Error('User not authenticated');
+    this.loading.set(true);
+    try {
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) throw new Error('User not authenticated');
 
-    const now = new Date();
-    const expense: Expense = {
-      id: crypto.randomUUID(),
-      amount: input.amount,
-      category: input.category,
-      description: input.description,
-      date: input.date,
-      time: input.time,
-      paymentMethod: input.paymentMethod,
-      archived: false,
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString()
-    };
-
-    const { data, error } = await this.supabase.client
-      .from('expenses')
-      .insert({
-        user_id: userId,
-        amount: expense.amount,
-        category: expense.category,
-        description: expense.description,
-        date: expense.date,
-        time: expense.time,
-        payment_method: expense.paymentMethod,
-        archived: false
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    await this.refresh();
-    return data;
-  }
-
-  async update(input: UpdateExpenseInput) {
-    const userId = this.auth.currentUser()?.id;
-    if (!userId) throw new Error('User not authenticated');
-
-    const { data, error } = await this.supabase.client
-      .from('expenses')
-      .update({
+      const now = new Date();
+      const expense: Expense = {
+        id: crypto.randomUUID(),
         amount: input.amount,
         category: input.category,
         description: input.description,
         date: input.date,
         time: input.time,
-        payment_method: input.paymentMethod,
-        archived: input.archived
-      })
-      .eq('id', input.id)
-      .eq('user_id', userId)
-      .select()
-      .single();
+        paymentMethod: input.paymentMethod,
+        archived: false,
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString()
+      };
 
-    if (error) throw error;
-    await this.refresh();
-    return data;
+      const { data, error } = await this.supabase.client
+        .from('expenses')
+        .insert({
+          user_id: userId,
+          amount: expense.amount,
+          category: expense.category,
+          description: expense.description,
+          date: expense.date,
+          time: expense.time,
+          payment_method: expense.paymentMethod,
+          archived: false
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      await this.refresh();
+      return data;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async update(input: UpdateExpenseInput) {
+    this.loading.set(true);
+    try {
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) throw new Error('User not authenticated');
+
+      const { data, error } = await this.supabase.client
+        .from('expenses')
+        .update({
+          amount: input.amount,
+          category: input.category,
+          description: input.description,
+          date: input.date,
+          time: input.time,
+          payment_method: input.paymentMethod,
+          archived: input.archived
+        })
+        .eq('id', input.id)
+        .eq('user_id', userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      await this.refresh();
+      return data;
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async remove(id: string) {
-    const userId = this.auth.currentUser()?.id;
-    if (!userId) throw new Error('User not authenticated');
+    this.loading.set(true);
+    try {
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) throw new Error('User not authenticated');
 
-    const { error } = await this.supabase.client
-      .from('expenses')
-      .delete()
-      .eq('id', id)
-      .eq('user_id', userId);
+      const { error } = await this.supabase.client
+        .from('expenses')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', userId);
 
-    if (error) throw error;
-    await this.refresh();
+      if (error) throw error;
+      await this.refresh();
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async archive(id: string) {
@@ -154,17 +169,22 @@ export class ExpenseService {
   }
 
   async hardDelete(id: string) {
-    const userId = this.auth.currentUser()?.id;
-    if (!userId) throw new Error('User not authenticated');
+    this.loading.set(true);
+    try {
+      const userId = this.auth.currentUser()?.id;
+      if (!userId) throw new Error('User not authenticated');
 
-    const { error } = await this.supabase.client
-      .from('expenses')
-      .delete()
-      .eq('id', id)
-      .eq('user_id', userId);
+      const { error } = await this.supabase.client
+        .from('expenses')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', userId);
 
-    if (error) throw error;
-    await this.refresh();
+      if (error) throw error;
+      await this.refresh();
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   createDefaultsForNow(partial?: Partial<NewExpenseInput>): NewExpenseInput {

@@ -41,8 +41,9 @@
             <button mat-button type="button" *ngIf="editingId" (click)="cancelEdit()" class="cancel-btn">
               إلغاء
             </button>
-            <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="submit-btn">
-              {{ editingId ? 'حفظ التغييرات' : 'إضافة الراتب' }}
+            <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading()" class="submit-btn">
+              <span *ngIf="loading()" class="animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full ml-2"></span>
+              {{ loading() ? 'جاري الحفظ...' : (editingId ? 'حفظ التغييرات' : 'إضافة الراتب') }}
             </button>
           </div>
         </form>
